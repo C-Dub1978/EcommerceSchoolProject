@@ -10,6 +10,26 @@
     <div class="row">
         <div class="col-sm-2"></div>
         <div class="jumbotron text-center col-sm-8">
+            <?php
+            if(isset($_POST['username'])) {
+                $username = $_POST['username'];
+            }
+            else {
+                $username = 'User';
+            }
+            if(isset($_POST['email'])) {
+                $email = $_POST['email'];
+            }
+            else {
+                $email = 'no email submitted';
+            }
+            if(isset($_POST['password'])) {
+                $password = $_POST['password'];
+            }
+            else {
+                $password = 'none';
+            }
+            ?>
             <h2>Welcome to Initech</h2>
             <p>Initech....where initiative meets technology</p>
             <p>We sell products that meet your technological needs, no matter what your stack</p>
@@ -23,9 +43,9 @@
             <div class="col-sm-2"></div>
             <div class="col-sm-8">
                 <h3>Our Products</h3><br>
-                <table class="table table-striped table-hover">
-                    <tr><th>Product</th><th>Information</th><th>See More</th><th>Price</th></tr>
-                    <tr><td>Swingline Stapler, Red</td><td>An absolute classic, heavy duty, durable, and lasting</td><td><a href="productInfo.php?product_id=red_stapler" class="productPic"><img src="pics/stapler.jpg" width="50px" height="50px"></a></td><td>$19.99</td></tr>
+                <table class="table">
+                    <tr><th>Product</th><th>Information</th><th>See More</th><th>Price</th><th colspan="2">Quantity</th></tr>
+                    <tr><td>Swingline Stapler, Red</td><td>An absolute classic, heavy duty, durable, and lasting</td><td><a href="productInfo.php?product_id=red_stapler" class="productPic"><img src="pics/stapler.jpg" width="50px" height="50px"></a></td><td>$19.99</td><td><input type="number" min = "0" max="50" id="stapler_red_quantity" class="quantity"></td><td><button type="submit" class="btn btn-primary btn-block btn-large">Add to Cart</button></td></tr>
                     <tr><td>Swingline Stapler, Blue</td><td>An absolute classic, heavy duty, durable, and lasting</td><td><a href="productInfo.php?product_id=blue_stapler" class="productPic"><img src="pics/staplerBlue.jpg" width="50px" height="50px"></a></td><td>$19.99</td></tr>
                     <tr><td>Floppy disk, 3.5"</td><td>For your storage needs, up to 1.44 MB disk storage</td><td><a href="productInfo.php?product_id=small_floppy" class="productPic"><img src="pics/floppySmall.jpeg" width="50px" height="50px"></a></td><td>$5.18</td></tr>
                     <tr><td>Floppy disk, 5.5"</td><td>Stores up to 1.2 MB, excellet storage solution</td><td><a href="productInfo.php?product_id=big_floppy" class="productPic"><img src="pics/floppyBig.jpg" width="50px" height="50px"></a></td><td>$9.11</td></tr>
@@ -38,7 +58,12 @@
                     <tr><td>Mr. Coffee</td><td>Drive. Initiative. Productive developers. Bring the crack epidemic into the office</td><td><a href="productInfo.php?product_id=coffee" class="productPic"><img src="pics/coffee.png" width="50px" height="50px"></a></td><td>$1,900.21</td></tr>
                     <tr><td>Office Kegerator</td><td>Because EVERYONE loves beer</td><td><a href="productInfo.php?product_id=beer" class="productPic"><img src="pics/beer.jpg" width="50px" height="50px"></a></td><td>$412.02</td></tr>
                 </table>
-                <a href="#"><button class="btn btn-primary">Back To Top</button></a>
+                <?php
+                    echo "<p>" . $username . "<br></p>";
+                    echo "<p>" . $email . "<br></p>";
+                    echo "<p>" . $password . "<br></p>";
+                ?>
+                <br><br><br>
             </div>
             <div class="col-sm-2"></div>
         </div>
