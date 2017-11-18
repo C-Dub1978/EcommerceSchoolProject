@@ -53,6 +53,8 @@ td {
     max-width: 200px;
 }
 
-table button {
-    width: 75px;
+
+.logout {
+    float: right;
+    margin-bottom: 5px;
 }
