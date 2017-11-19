@@ -58,3 +58,7 @@ td {
     float: right;
     margin-bottom: 5px;
 }
+
+.form-group input, .form-group select {
+    width: 30%;
+}
