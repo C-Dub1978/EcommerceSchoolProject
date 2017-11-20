@@ -1,5 +1,18 @@
 <?php
 session_start();
+$time_now = $_SERVER['REQUEST_TIME'];
+if(!isset($_SESSION['timeout'])) {
+    $_SESSION['timeout'] = $time_now;
+}
+$duration = 1800;
+
+if(isset($_SESSION['timeout']) && $time_now - $_SESSION['timeout'] > $duration) {
+    unset($_SESSION['username']);
+    unset($_SESSION['email']);
+    unset($_SESSION['timeout']);
+    session_unset();
+    session_destroy();
+}
 $total = 0;
 $products = array(
     array(
@@ -135,21 +148,26 @@ function getTotal($price, $quantity) {
                         echo money_format('%i', $total);
                         echo '<br>'?>
                     </h3>
+                    <p>Your email address:
+                        <?php
+                        if(isset($_SESSION['email'])){
+                            echo $_SESSION['email'];
+                        }?></p>
                     <div class="form-group">
                         <label for="first_name">First Name:</label>
-                        <input type="text" class="form-control" name="first_name" required="required">
+                        <input type="text" class="form-control" name="first_name">
                     </div>
                     <div class="form-group">
                         <label for="last_name">Last Name:</label>
-                        <input type="text" class="form-control" name="last_name" required="required">
+                        <input type="text" class="form-control" name="last_name">
                     </div>
                     <div class="form-group">
                         <label for="address">Billing Address:</label>
-                        <input type="text" class="form-control" name="address" required="required">
+                        <input type="text" class="form-control" name="address">
                     </div>
                     <div class="form-group">
                         <label for="city">City:</label>
-                        <input type="text" class="form-control" name="city" required="required">
+                        <input type="text" class="form-control" name="city">
                     </div>
                     <div class="form-group">
                         <label for="state">Select State:</label>
@@ -222,7 +240,7 @@ function getTotal($price, $quantity) {
                         <input type="text" class="form-control" name="card_expiration">
                     </div>
                     <button type="submit" class="btn btn-primary">Submit Order</button>
-                </form><br><br><br>
+                </form><br><br><a href="welcome.php"><button class="btn btn-primary">Back To Products</button></a><br><br><br>
             </div>
         </div>
     </div>

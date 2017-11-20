@@ -62,3 +62,7 @@ td {
 .form-group input, .form-group select {
     width: 30%;
 }
+
+.right {
+    float: right;
+}

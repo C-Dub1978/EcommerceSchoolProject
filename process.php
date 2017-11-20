@@ -1,6 +1,18 @@
 <?php
 session_start();
+$time_now = $_SERVER['REQUEST_TIME'];
+if(!isset($_SESSION['timeout'])) {
+    $_SESSION['timeout'] = $time_now;
+}
+$duration = 1800;
 
+if(isset($_SESSION['timeout']) && $time_now - $_SESSION['timeout'] > $duration) {
+    unset($_SESSION['username']);
+    unset($_SESSION['email']);
+    unset($_SESSION['timeout']);
+    session_unset();
+    session_destroy();
+}
 $first_name = $_POST['first_name'];
 $last_name = $_POST['last_name'];
 $address = $_POST['address'];
@@ -23,9 +35,10 @@ $card_expiration = $_POST['card_expiration'];
         <div class="row">
             <div class="col-sm-2"></div>
             <div class="jumbotron text-center col-sm-8">
-                <h2>Thanks for doing semi-solid business with a half-assed company!</h2>
+                <h2>Thanks for doing semi-solid business with our half-witted company!</h2>
                 <p>Now that we have your money, PLEASE use this button to logout</p>
-                <p>If not, you may want to consider pursuing a degree in software development and security?</p>
+                <p>If you are not satisfied with our information security, you may want</p>
+                <p>to consider pursuing a degree in software development and security?</p>
                 <span class="logout"><a href="logout.php"><button class="btn btn-primary btn-block">Logout</button></a></span>
             </div>
             <div class="col-sm-2"></div>
