@@ -103,7 +103,7 @@ if(isset($_SESSION['timeout']) && $time_now - $_SESSION['timeout'] > $duration) 
                     }
                 ?>
                 <a href="logout.php" class="right"><button class="btn btn-primary">Logout</button></a>
-                <a href="welcome.php"><button class="btn btn-primary">Back To Products</button></a>
+                <a href="index.php"><button class="btn btn-primary">Back To Products</button></a>
             </div>
             <div class="col-sm-2"></div>
         </div>

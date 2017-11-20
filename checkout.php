@@ -240,7 +240,7 @@ function getTotal($price, $quantity) {
                         <input type="text" class="form-control" name="card_expiration">
                     </div>
                     <button type="submit" class="btn btn-primary">Submit Order</button>
-                </form><br><br><a href="welcome.php"><button class="btn btn-primary">Back To Products</button></a><br><br><br>
+                </form><br><br><a href="index.php"><button class="btn btn-primary">Back To Products</button></a><br><br><br>
             </div>
         </div>
     </div>
