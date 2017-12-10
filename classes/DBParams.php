@@ -7,10 +7,10 @@
  */
 
 class DBParams {
-    private $username = "";
-    private $password = "";
-    private $host = "";
-    private $db = "";
+    private $username;
+    private $password;
+    private $host;
+    private $db;
 
     public function __construct($myusername, $mypassword, $myhost, $mydb) {
         $this->username = $myusername;
