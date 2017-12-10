@@ -79,4 +79,31 @@ function addProduct($db, $productArray) {
     }
     return $added;
 }
+
+function updateProduct($db, $productArray, $productID) {
+    echo "entering update single product<br>";
+    $updated = false;
+    $sql = $db->prepare("UPDATE Products SET productName=:name, price=:price, description=:description, pictureURL=:pic WHERE productID=:id");
+    $sql->execute(array(':name' => $productArray['productName'],
+        ':price' => $productArray['price'],
+        ':description' => $productArray['description'],
+        ':pic' => $productArray['pictureURL'],
+        ':id' => $productID));
+    if ($sql->rowCount() > 0) {
+        $updated = true;
+    }
+    return $updated;
+}
+
+function deleteProduct($db, $productID) {
+    echo "entering delete product<br>";
+    $deleted = false;
+    $sql = $db->prepare("DELETE FROM Products WHERE productID=:id");
+    $sql->bindParam(':id', $productID);
+    $sql->execute();
+    if($sql->rowCount() > 0) {
+        $deleted = true;
+    }
+    return $deleted;
+}
 ?>
