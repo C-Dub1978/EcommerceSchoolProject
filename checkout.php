@@ -1,18 +1,5 @@
 <?php
-session_start();
-$time_now = $_SERVER['REQUEST_TIME'];
-if(!isset($_SESSION['timeout'])) {
-    $_SESSION['timeout'] = $time_now;
-}
-$duration = 1800;
-
-if(isset($_SESSION['timeout']) && $time_now - $_SESSION['timeout'] > $duration) {
-    unset($_SESSION['username']);
-    unset($_SESSION['email']);
-    unset($_SESSION['timeout']);
-    session_unset();
-    session_destroy();
-}
+include 'session.php';
 $total = 0;
 $products = array(
     array(

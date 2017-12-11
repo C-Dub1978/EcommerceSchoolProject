@@ -11,10 +11,11 @@ if($params != null) {
         $products = getAllProducts($pdo);
         foreach($products as $product) {
             echo "<ul>";
-            echo "<li>{$product['productName']}</li>";
-            echo "<li>{$product['price']}</li>";
-            echo "<li>{$product['description']}</li>";
-            echo "<li><img src='../" . $product['pictureURL'] . "' width='50px' height='50px'></li>";
+            echo "<li>" . $product->getID() . "</li>";
+            echo "<li>" . $product->getName() . "</li>";
+            echo "<li>" . $product->getPrice() . "</li>";
+            echo "<li>" . $product->getDescription() . "</li>";
+            echo "<li><img src='../" . $product->getPicURL() . "' width='50px' height='50px'></li>";
             echo "</ul>";
         }
 
@@ -23,10 +24,11 @@ if($params != null) {
             echo "<br>";
             echo "<br>";
             echo "-----------------<br>";
-            echo "the name: " . $product['productName'] . "<br>";
-            echo "the price: " . $product['price'] . "<br>";
-            echo "the description: " . $product['description'] . "<br>";
-            echo "the picture: <img src='../" . $product['pictureURL'] . "' width='50px' height='50px'>";
+            echo "the id: " . $product->getID() . "<br>";
+            echo "the name: " . $product->getName() . "<br>";
+            echo "the price: " . $product->getPrice() . "<br>";
+            echo "the description: " . $product->getDescription() . "<br>";
+            echo "the picture: <img src='../" . $product->getPicURL() . "' width='50px' height='50px'>";
         }
 
         $deleted = deleteProduct($pdo, 12);
