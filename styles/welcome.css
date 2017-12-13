@@ -57,12 +57,48 @@ td {
 .logout {
     float: right;
     margin-bottom: 5px;
+    margin-top:10px;
 }
 
 .form-group input, .form-group select {
     width: 30%;
 }
 
+.form-group textarea {
+    width: 60%;
+}
+
+input[type="file"] {
+    display:none;
+}
+
+.fileUpload {
+    border:1px inset #26DECF;
+    border-radius:5px;
+    display:inline-block;
+    padding: 6px 12px;
+    cursor:pointer;
+    box-shadow: 2px 2px 10px #333;
+}
+
+.fileUpload:hover {
+    box-shadow:inset 20px 20px 20px 0px #26DECF;
+}
+
 .right {
     float: right;
 }
+
+#logoutAdminPanel {
+    position: relative;
+    right: 20px;
+}
+
+.adminForm {
+    padding: 30px;
+    border:1px solid #26DECF;
+    border-radius:2px;
+    box-shadow: 2px 2px 10px #333;
+}
+
+

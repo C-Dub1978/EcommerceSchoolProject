@@ -356,7 +356,34 @@ function getUser($db, $user, $email) {
         $customer->setAddress($result['address']);
         $customer->setIsAdmin($result['isAdmin']);
     }
+    killDB($db);
     return $customer;
+}
+
+/**
+ * @param $db
+ * @return null
+ * Function to get all users from db
+ */
+function getAllUsers($db) {
+    $users = null;
+    $sql = $db->prepare("SELECT * FROM Customers");
+    $sql->execute();
+    $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+    if($result) {
+        $users = array();
+        foreach($result as $user) {
+            $myUser = new Customer();
+            $myUser->setUsername($user['username']);
+            $myUser->setEmail($user['email']);
+            $myUser->setAddress($user['address']);
+            $myUser->setIsAdmin($user['isAdmin']);
+            $myUser->setId($user['customerID']);
+            $users[] = $myUser;
+        }
+    }
+    killDB($db);
+    return $users;
 }
 
 /**
@@ -398,6 +425,7 @@ function createUser($db, $userArray) {
     catch(PDOException $e) {
         echo $e->getMessage();
     }
+    killDB($db);
     return $newCustomer;
 }
 
@@ -420,6 +448,7 @@ function getAllProducts($db) {
         $product->setPicURL($result['pictureURL']);
         $products[] = $product;
     }
+    killDB($db);
     return $products;
 }
 
@@ -448,6 +477,7 @@ function getProduct($db, $id) {
     catch(PDOException $e) {
         echo $e->getMessage();
     }
+    killDB($db);
     return $product;
 }
 
@@ -469,6 +499,7 @@ function addProduct($db, $productArray) {
     if($sql->rowCount() > 0) {
         $added = true;
     }
+    killDB($db);
     return $added;
 }
 
@@ -490,6 +521,7 @@ function updateProduct($db, $productArray, $productID) {
     if ($sql->rowCount() > 0) {
         $updated = true;
     }
+    killDB($db);
     return $updated;
 }
 
@@ -507,6 +539,7 @@ function deleteProduct($db, $productID) {
     if($sql->rowCount() > 0) {
         $deleted = true;
     }
+    killDB($db);
     return $deleted;
 }
 ?>

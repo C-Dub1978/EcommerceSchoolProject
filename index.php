@@ -43,7 +43,15 @@ $pdo = getDb($params->getUsername(), $params->getPassword(), $params->getDb(), $
         <div class="products">
             <div class="col-sm-2"></div>
             <div class="col-sm-8">
-                <h3>Our Products</h3><span class="logout"><a href="logout.php"><button class="btn btn-primary btn-block">Logout</button></a></span><br>
+                <h3>Our Products</h3>
+                    <span class="logout">
+                        <a href="logout.php"><button class="btn btn-primary btn-block">Logout</button></a><br>
+                        <?php
+                            if($_SESSION['isAdmin']) {
+                                echo "<a href='adminPanel.php'><button class='btn btn-primary btn-block'>Admin</button></a>";
+                            }
+                        ?>
+                    </span><br>
                 <form action="checkout.php" method="post">
                     <table class="table">
                         <tr>
