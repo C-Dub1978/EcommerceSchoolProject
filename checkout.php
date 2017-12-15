@@ -1,80 +1,20 @@
 <?php
 include 'session.php';
+include 'db/DBFunctions.php';
+$params = getDBParams();
+$pdo = getDb($params->getUsername(), $params->getPassword(), $params->getDb(), $params->getHost());
 $total = 0;
-$products = array(
-    array(
-        'name' => 'Swingline Stapler, Red',
-        'quantity' => $_POST['stapler_red_quantity'],
-        'price' => 19.99,
-        'url' => 'pics/stapler.jpg'
-    ),
-    array(
-        'name' => 'Swingline Stapler, Blue',
-        'quantity' => $_POST['stapler_blue_quantity'],
-        'price' => 19.99,
-        'url' => 'pics/staplerBlue.jpg'
-    ),
-    array(
-        'name' => 'Floppy Disk, 3.5"',
-        'quantity' => $_POST['small_floppy_quantity'],
-        'price' => 5.18,
-        'url' => 'pics/floppySmall.jpeg'
-    ),
-    array(
-        'name' => 'Floppy Disk, 5.5"',
-        'quantity' => $_POST['large_floppy_quantity'],
-        'price' => 9.11,
-        'url' => 'pics/floppyBig.jpg'
-    ),
-    array(
-        'name' => 'Macintosh PC',
-        'quantity' => $_POST['mac_quantity'],
-        'price' => 1237.74,
-        'url' => 'pics/macintosh1.jpeg'
-    ),
-    array(
-        'name' => 'Imac PC',
-        'quantity' => $_POST['imac_quantity'],
-        'price' => 1237.74,
-        'url' => 'pics/macintosh2.jpg'
-    ),
-    array(
-        'name' => 'Commadore Amiga',
-        'quantity' => $_POST['amiga_quantity'],
-        'price' => 1556.01,
-        'url' => 'pics/amiga.jpg'
-    ),
-    array(
-        'name' => 'IBM Desktop',
-        'quantity' => $_POST['ibm_quantity'],
-        'price' => 2300.11,
-        'url' => 'pics/ibm.jpg'
-    ),
-    array(
-        'name' => 'Sony Vaio Laptop',
-        'quantity' => $_POST['sony_quantity'],
-        'price' => 898.71,
-        'url' => 'pics/sony.png'
-    ),
-    array(
-        'name' => 'Rack Server',
-        'quantity' => $_POST['rack_quantity'],
-        'price' => 7019.33,
-        'url' => 'pics/server.jpg'
-    ),
-    array(
-        'name' => 'Mr. Coffee',
-        'quantity' => $_POST['coffee_quantity'],
-        'price' => 1900.21,
-        'url' => 'pics/coffee.png'
-    ),
-    array(
-        'name' => 'Office Kegerator',
-        'quantity' => $_POST['keg_quantity'],
-        'price' => 412.02,
-        'url' => 'pics/beer.jpg'
-    )
-);
+$products = getAllProducts($pdo);
+
+$counter = 0;
+foreach($_POST as $key => $value) {
+    $strfield = str_replace('_', ' ', $key);
+    if($value != null && $value > 0) {
+        $products[$counter]->setQuantity($value);
+    }
+    $counter++;
+}
+
 
 function getTotal($price, $quantity) {
     return $price * $quantity;
@@ -111,17 +51,17 @@ function getTotal($price, $quantity) {
                         <?php
                             setlocale(LC_MONETARY, 'en_US');
                             foreach($products as $product) {
-                                if(!is_null($product['quantity']) && $product['quantity'] > 0) {
-                                    $total_per_product = getTotal($product['price'], $product['quantity']);
+                                if(!is_null($product->getQuantity()) && $product->getQuantity() > 0) {
+                                    $total_per_product = getTotal($product->getPrice(), $product->getQuantity());
                                     $total += $total_per_product;
                                     echo "<tr>";
                                     echo "<td>";
-                                    echo $product['name'] . "</td>";
-                                    echo "<td><img src=" . $product['url'] . " width='50' height='50'>";
+                                    echo $product->getName() . "</td>";
+                                    echo "<td><img src=" . $product->getPicURL() . " width='50' height='50'>";
                                     echo "<td>";
-                                    echo $product['price'] . "</td>";
+                                    echo $product->getPrice() . "</td>";
                                     echo "<td>";
-                                    echo $product['quantity'] . "</td>";
+                                    echo $product->getQuantity() . "</td>";
                                     echo "<td>";
                                     echo money_format('%i', $total_per_product);
                                     echo "</tr>";
@@ -142,23 +82,23 @@ function getTotal($price, $quantity) {
                         }?></p>
                     <div class="form-group">
                         <label for="first_name">First Name:</label>
-                        <input type="text" class="form-control" name="first_name">
+                        <input type="text" class="form-control" name="first_name" required />
                     </div>
                     <div class="form-group">
                         <label for="last_name">Last Name:</label>
-                        <input type="text" class="form-control" name="last_name">
+                        <input type="text" class="form-control" name="last_name" required />
                     </div>
                     <div class="form-group">
                         <label for="address">Billing Address:</label>
-                        <input type="text" class="form-control" name="address">
+                        <input type="text" class="form-control" name="address" required />
                     </div>
                     <div class="form-group">
                         <label for="city">City:</label>
-                        <input type="text" class="form-control" name="city">
+                        <input type="text" class="form-control" name="city" required />
                     </div>
                     <div class="form-group">
                         <label for="state">Select State:</label>
-                        <select class="form-control" name="state">
+                        <select class="form-control" name="state" required>
                             <option>AL</option>
                             <option>AK</option>
                             <option>AZ</option>
@@ -213,18 +153,18 @@ function getTotal($price, $quantity) {
                     </div>
                     <div class="form-group">
                         <label for="card_type">Credit Card Type:</label>
-                            <label class="radio-inline"><input type="radio" name="cardRadio" value="Visa">Visa</label>
+                            <label class="radio-inline"><input type="radio" name="cardRadio" value="Visa" required>Visa</label>
                             <label class="radio-inline"><input type="radio" name="cardRadio" value="MasterCard">MasterCard</label>
                             <label class="radio-inline"><input type="radio" name="cardRadio" value="Amex">Amex</label>
                             <label class="radio-inline"><input type="radio" name="cardRadio" value="Diner's Club">Diner's Club</label>
                     </div>
                     <div class="form-group">
                         <label for="card_number">Credit Card Number:</label>
-                        <input type="text" class="form-control" name="card_number">
+                        <input type="text" class="form-control" name="card_number" required>
                     </div>
                     <div class="form-group">
                         <label for="card_expiration">Credit Card Expiration Date:</label>
-                        <input type="text" class="form-control" name="card_expiration">
+                        <input type="text" class="form-control" name="card_expiration" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Submit Order</button>
                 </form><br><br><a href="index.php"><button class="btn btn-primary">Back To Products</button></a><br><br><br>

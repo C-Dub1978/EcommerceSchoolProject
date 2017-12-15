@@ -85,6 +85,7 @@ class Product {
     private $price;
     private $description;
     private $picURL;
+    private $quantity;
 
     //Constructor
     public function __construct() {
@@ -168,6 +169,14 @@ class Product {
     public function setId($id)
     {
         $this->id = $id;
+    }
+
+    public function getQuantity() {
+        return $this->quantity;
+    }
+
+    public function setQuantity($num) {
+        $this->quantity = $num;
     }
 
     public function __toString()
@@ -333,32 +342,6 @@ function killDB($db) {
     $db = null;
 }
 
-/**
- * @param $db
- * @param $user
- * @param $email
- * @return Customer
- * Function to build a prepared statement with PDO, and build/return a Customer class object, if that
- * customer exists in mysql
- */
-function getUser($db, $user, $email) {
-    $customer = null;
-    $sql = $db->prepare("SELECT * FROM Customers WHERE username=:user AND email=:email");
-    $sql->bindParam(':user', $user, PDO::PARAM_STR);
-    $sql->bindParam(':email', $email, PDO::PARAM_STR);
-    $sql->execute();
-    $result = $sql->fetch(PDO::FETCH_ASSOC);
-    if($result != null) {
-        $customer = new Customer();
-        $customer->setId($result['customerID']);
-        $customer->setUsername($result['username']);
-        $customer->setEmail($result['email']);
-        $customer->setAddress($result['address']);
-        $customer->setIsAdmin($result['isAdmin']);
-    }
-    killDB($db);
-    return $customer;
-}
 
 /**
  * @param $db
@@ -367,24 +350,86 @@ function getUser($db, $user, $email) {
  */
 function getAllUsers($db) {
     $users = null;
-    $sql = $db->prepare("SELECT * FROM Customers");
-    $sql->execute();
-    $result = $sql->fetchAll(PDO::FETCH_ASSOC);
-    if($result) {
-        $users = array();
-        foreach($result as $user) {
-            $myUser = new Customer();
-            $myUser->setUsername($user['username']);
-            $myUser->setEmail($user['email']);
-            $myUser->setAddress($user['address']);
-            $myUser->setIsAdmin($user['isAdmin']);
-            $myUser->setId($user['customerID']);
-            $users[] = $myUser;
+    try {
+        $sql = $db->prepare("SELECT * FROM Customers");
+        $sql->execute();
+        $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+        if ($result) {
+            $users = array();
+            foreach ($result as $user) {
+                $myUser = new Customer();
+                $myUser->setUsername($user['username']);
+                $myUser->setEmail($user['email']);
+                $myUser->setAddress($user['address']);
+                $myUser->setIsAdmin($user['isAdmin']);
+                $myUser->setId($user['customerID']);
+                $users[] = $myUser;
+            }
         }
     }
-    killDB($db);
+    catch(PDOException $e) {
+        echo $e->getMessage();
+    }
+    //killDB($db);
     return $users;
 }
+
+
+/**
+ * @param $db
+ * @param $user
+ * @param $email
+ * @return Customer
+ * Function to build a prepared statement with PDO, and build/return a Customer class object, if that
+ * customer exists in mysql
+ */
+function getUser($db, $custid) {
+    $customer = null;
+    try {
+        $sql = $db->prepare("SELECT * FROM Customers WHERE customerID=:id");
+        $sql->bindParam(':id', $custid);
+        $sql->execute();
+        $result = $sql->fetch(PDO::FETCH_ASSOC);
+        if ($result != null) {
+            $customer = new Customer();
+            $customer->setId($result['customerID']);
+            $customer->setUsername($result['username']);
+            $customer->setEmail($result['email']);
+            $customer->setAddress($result['address']);
+            $customer->setIsAdmin($result['isAdmin']);
+        }
+    }
+    catch(PDOException $e) {
+        echo $e->getMessage();
+    }
+    //killDB($db);
+    return $customer;
+}
+
+function getUserOverload($db, $username, $email) {
+    $customer = null;
+    try {
+        $sql = $db->prepare("SELECT * FROM Customers WHERE username=:name AND email=:mail LIMIT 1");
+        $sql->bindParam(':name', $username);
+        $sql->bindParam(':mail', $email);
+        $sql->execute();
+        $result = $sql->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            $customer = new Customer();
+            $customer->setId($result['customerID']);
+            $customer->setUsername($result['username']);
+            $customer->setEmail($result['email']);
+            $customer->setAddress($result['address']);
+            $customer->setIsAdmin($result['isAdmin']);
+        }
+    }
+    catch(PDOException $e) {
+        echo $e->getMessage();
+    }
+    return $customer;
+}
+
+
 
 /**
  * @param $db
@@ -393,40 +438,88 @@ function getAllUsers($db) {
  * Create a new user, either by the admin panel or
  */
 function createUser($db, $userArray) {
-    $newcustomer = null;
-    $adminStatus = 0;
+    $newCustomer = null;
     try {
         $sql = $db->prepare("INSERT INTO Customers(username, email, address, isAdmin) VALUES (
                               :user, :emailaddy, :addy, :admin
                             )");
-        if($userArray['isAdmin']) {
-            $adminStatus = 1;
-        }
         $sql->execute(array(':user' => $userArray['username'],
                             ':emailaddy' => $userArray['email'],
                             ':addy' => $userArray['address'],
-                            ':admin' => $adminStatus
+                            ':admin' => $userArray['accountType']
             ));
         if($sql->rowCount() > 0) {
             $newCustomer = new Customer();
+            $id = $db->lastInsertId();
+            echo "the last id is: " . $id;
             $newCustomer->setUsername($userArray['username']);
             $newCustomer->setEmail($userArray['email']);
             $newCustomer->setAddress($userArray['address']);
-            $newCustomer->setIsAdmin($userArray['isAdmin']);
+            $newCustomer->setIsAdmin($userArray['accountType']);
+            $newCustomer->setId($id);
         }
-        $sql = $db->prepare("SELECT customerID FROM Customers WHERE username=:name AND email=:email");
-        $sql->execute(array(':username' => $userArray['username'],
-                            ':email' => $userArray['email']));
-        $id = $sql->fetch(PDO::FETCH_ASSOC);
+    }
+    catch(PDOException $e) {
+        echo "this didn't work: " . $e->getMessage();
+    }
+    //killDB($db);
+    return $newCustomer;
+}
+
+function updateUser($db, $userArray, $userID) {
+    $updated = false;
+    try {
+        $sql = $db->prepare("UPDATE Customers SET username=:name, email=:mail, address=:addy, isAdmin=:admin WHERE customerID=:id");
+        $sql->execute(array(
+            ':name' => $userArray['username'],
+            ':mail' => $userArray['email'],
+            ':addy' => $userArray['address'],
+            ':admin' => $userArray['adminType'],
+            ':id' => $userID
+        ));
+        if ($sql->rowCount() > 0) {
+            $updated = true;
+        }
+    }
+    catch(PDOException $e) {
+        echo "error: " . $e->getMessage();
+    }
+    return $updated;
+}
+
+function deleteUser($db, $customerID) {
+    $deleted = false;
+    try {
+        $sql = $db->prepare("DELETE FROM Customers WHERE customerID=:id");
+        $sql->bindParam(':id', $customerID);
+        $sql->execute();
         if($sql->rowCount() > 0) {
-            $newCustomer->setId($id['customerID']);
+            $deleted = true;
         }
     }
     catch(PDOException $e) {
         echo $e->getMessage();
     }
-    killDB($db);
-    return $newCustomer;
+    return $deleted;
+}
+
+
+function updateUserAddress($db, $id, $address) {
+    $updated = false;
+    try {
+        $sql = $db->prepare("UPDATE Customers SET address=:addy WHERE customerID=:custID");
+        $sql->bindParam(':addy', $address);
+        $sql->bindParam(':custID', $id);
+        $sql->execute();
+        if($sql->rowCount() > 0) {
+            $updated = true;
+        }
+    }
+    catch(PDOException $e) {
+        echo $e->getMessage();
+    }
+    echo "the bool value in the update address sql function is: " . $updated;
+    return $updated;
 }
 
 /**
@@ -437,32 +530,37 @@ function createUser($db, $userArray) {
  */
 function getAllProducts($db) {
     $products = array();
-    $sql = $db->query("SELECT * FROM Products");
-    $results = $sql->fetchAll(PDO::FETCH_ASSOC);
-    foreach($results as $result) {
-        $product = new Product();
-        $product->setId($result['productID']);
-        $product->setName($result['productName']);
-        $product->setPrice($result['price']);
-        $product->setDescription($result['description']);
-        $product->setPicURL($result['pictureURL']);
-        $products[] = $product;
+    try {
+        $sql = $db->query("SELECT * FROM Products");
+        $results = $sql->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($results as $result) {
+            $product = new Product();
+            $product->setId($result['productID']);
+            $product->setName($result['productName']);
+            $product->setPrice($result['price']);
+            $product->setDescription($result['description']);
+            $product->setPicURL($result['pictureURL']);
+            $products[] = $product;
+        }
     }
-    killDB($db);
+    catch(PDOException $e) {
+        echo $e->getMessage();
+    }
+    //killDB($db);
     return $products;
 }
 
 /**
  * @param $db
- * @param $name
+ * @param $id
  * @return null
  * Function to get a single product by name
  */
 function getProduct($db, $id) {
     $product = null;
     try {
-        $sql = $db->prepare("SELECT * FROM Products WHERE productID=:product LIMIT 1");
-        $sql->bindParam(':product', $id);
+        $sql = $db->prepare("SELECT * FROM Products WHERE productID=:product");
+        $sql->bindParam(':product', $id, PDO::PARAM_INT);
         $sql->execute();
         $row = $sql->fetch(PDO::FETCH_ASSOC);
         if($row) {
@@ -473,11 +571,14 @@ function getProduct($db, $id) {
             $product->setDescription($row['description']);
             $product->setPicURL($row['pictureURL']);
         }
+        else {
+
+        }
     }
     catch(PDOException $e) {
         echo $e->getMessage();
     }
-    killDB($db);
+    //killDB($db);
     return $product;
 }
 
@@ -489,17 +590,22 @@ function getProduct($db, $id) {
  */
 function addProduct($db, $productArray) {
     $added = false;
-    $sql = $db->prepare("INSERT INTO Products(productName, price, description, pictureURL) VALUES(
+    try {
+        $sql = $db->prepare("INSERT INTO Products(productName, price, description, pictureURL) VALUES(
                           :productName, :price, :description, :pictureURL
                        )");
-    $sql->execute(array(':productName' => $productArray['productName'],
-                         ':price' => $productArray['price'],
-                         ':description' => $productArray['description'],
-                         ':pictureURL' => $productArray['pictureURL']));
-    if($sql->rowCount() > 0) {
-        $added = true;
+        $sql->execute(array(':productName' => $productArray['productName'],
+            ':price' => $productArray['price'],
+            ':description' => $productArray['description'],
+            ':pictureURL' => $productArray['pictureURL']));
+        if ($sql->rowCount() > 0) {
+            $added = true;
+        }
     }
-    killDB($db);
+    catch(PDOException $e) {
+       echo $e->getMessage();
+    }
+    //killDB($db);
     return $added;
 }
 
@@ -512,16 +618,22 @@ function addProduct($db, $productArray) {
  */
 function updateProduct($db, $productArray, $productID) {
     $updated = false;
-    $sql = $db->prepare("UPDATE Products SET productName=:name, price=:price, description=:description, pictureURL=:pic WHERE productID=:id");
-    $sql->execute(array(':name' => $productArray['productName'],
-        ':price' => $productArray['price'],
-        ':description' => $productArray['description'],
-        ':pic' => $productArray['pictureURL'],
-        ':id' => $productID));
-    if ($sql->rowCount() > 0) {
-        $updated = true;
+    try {
+        $sql = $db->prepare("UPDATE Products SET productName=:name, price=:price, description=:description WHERE productID=:id");
+        $sql->execute(array(
+            ':name' => $productArray['productName'],
+            ':price' => $productArray['price'],
+            ':description' => $productArray['description'],
+            ':id' => $productID
+        ));
+        if ($sql->rowCount() > 0) {
+            $updated = true;
+        }
     }
-    killDB($db);
+    catch(PDOException $e) {
+        echo $e->getMessage();
+    }
+    //killDB($db);
     return $updated;
 }
 
@@ -533,13 +645,20 @@ function updateProduct($db, $productArray, $productID) {
  */
 function deleteProduct($db, $productID) {
     $deleted = false;
-    $sql = $db->prepare("DELETE FROM Products WHERE productID=:id");
-    $sql->bindParam(':id', $productID);
-    $sql->execute();
-    if($sql->rowCount() > 0) {
-        $deleted = true;
+    try {
+        $sql = $db->prepare("DELETE FROM Products WHERE productID=:id");
+        $sql->bindParam(':id', $productID);
+        $sql->execute();
+        if ($sql->rowCount() > 0) {
+            $deleted = true;
+        }
     }
-    killDB($db);
+    catch(PDOException $e) {
+        echo $e->getMessage();
+    }
+    //killDB($db);
     return $deleted;
 }
+
+
 ?>

@@ -20,7 +20,7 @@ $pdo = getDb($params->getUsername(), $params->getPassword(), $params->getDb(), $
             <h2>Welcome, <?php echo "<strong>". $_SESSION['username'] . "!</strong>" ?></h2>
             <p>Initech....where initiative meets technology</p>
             <p>We sell products that meet your technological needs, no matter what your stack</p>
-            <h4>Administrator Panel</h4>
+            <h3>Administrator Panel</h3>
         </div>
         <div class="col-sm-2"></div>
     </div>
@@ -34,7 +34,7 @@ $pdo = getDb($params->getUsername(), $params->getPassword(), $params->getDb(), $
                     <a href="logout.php" class="right" id="logoutAdminPanel"><button class="btn btn-primary">Logout</button></a>
                 </span>
                 <div class="adminForm">
-                    <form method="post" action="addItem.php?action=addproduct">
+                    <form method="post" action="addItem.php?action=addproduct" enctype="multipart/form-data">
                         <h3>Add Product</h3>
                         <div class="form-group">
                             <label for="productName">Product Name:</label>
@@ -49,8 +49,8 @@ $pdo = getDb($params->getUsername(), $params->getPassword(), $params->getDb(), $
                             <textarea name="description" class="form-control"></textarea>
                         </div>
                         <div class="form-group upload">
-                            <label for="productPicture" class="fileUpload">Upload Picture</label>
-                            <input type="file" name="productPicture" class="form-control" id="file-upload">
+                            <label for="productPicture">Upload Picture</label>
+                            <input type="file" name="productPicture" class="form-control" id="file-upload" />
                         </div>
                         <button type="submit" class="btn btn-primary">Add Product</button>
                     </form>
@@ -66,7 +66,7 @@ $pdo = getDb($params->getUsername(), $params->getPassword(), $params->getDb(), $
                                     echo "<label for='productsList1'>Select Product:</label>";
                                     echo "<select class='form-control' name='productsList1'>";
                                         foreach($products as $product) {
-                                            echo "<option>" . $product->getName() . "</option>";
+                                            echo "<option value='" . $product->getID() . "'>" . $product->getName() . "</option>";
                                         }
                                     echo "</select><br>";
                                     echo "<button type='submit' class='btn btn-primary'>Edit Product</button>";
@@ -88,10 +88,10 @@ $pdo = getDb($params->getUsername(), $params->getPassword(), $params->getDb(), $
                                     echo "<label for='productsList2'>Select Product:</label>";
                                     echo "<select class='form-control' name='productsList2'>";
                                     foreach($products as $product) {
-                                        echo "<option>" . $product->getName() . "</option>";
+                                        echo "<option value='" . $product->getID() . "'>" . $product->getName() . "</option>";
                                     }
                                     echo "</select><br>";
-                                    echo "<button type='submit' class='btn btn-primary'>Edit Product</button>";
+                                    echo "<button type='submit' class='btn btn-primary'>Delete Product</button>";
                                 }
                                 else {
                                     echo "<p>Product list is currently unavailable</p>";
@@ -105,7 +105,7 @@ $pdo = getDb($params->getUsername(), $params->getPassword(), $params->getDb(), $
                     <form method="post" action="addItem.php?action=addcustomer">
                         <h3>Add Customer</h3>
                         <div class="form-group">
-                            <label for="username">Customer Name:</label>
+                            <label for="username">User Name:</label>
                             <input type="text" name="customerName" class="form-control" required />
                         </div>
                         <div class="form-group">
@@ -114,11 +114,11 @@ $pdo = getDb($params->getUsername(), $params->getPassword(), $params->getDb(), $
                         </div>
                         <div class="form-group">
                             <label for="address">Address:</label>
-                            <input type="text" name="address" class="form-control" />
+                            <input type="text" name="address" class="form-control" required />
                         </div>
                         <div class="form-group">
                             <label for="accountType">Account Type:</label>
-                            <select class="form-control" name="accountType">
+                            <select class="form-control" name="accountType" required>
                                 <option>Administrator</option>
                                 <option>User</option>
                             </select>
@@ -138,7 +138,7 @@ $pdo = getDb($params->getUsername(), $params->getPassword(), $params->getDb(), $
                                     echo "<label for='customerList1'>Select Customer:</label>";
                                     echo "<select class='form-control' name='customerList1'>";
                                     foreach($customers as $customer) {
-                                        echo "<option>" . $customer->getUserName() . "</option>";
+                                        echo "<option value='" . $customer->getID() . "'>" . $customer->getUserName() . "</option>";
                                     }
                                     echo "</select><br>";
                                     echo "<button type='submit' class='btn btn-primary'>Edit Customer</button>";
@@ -160,7 +160,7 @@ $pdo = getDb($params->getUsername(), $params->getPassword(), $params->getDb(), $
                                 echo "<label for='customerList2'>Select Customer:</label>";
                                 echo "<select class='form-control' name='customerList2'>";
                                 foreach($customers as $customer) {
-                                    echo "<option>" . $customer->getUserName() . "</option>";
+                                    echo "<option value='" . $customer->getId() . "'>" . $customer->getUserName() . "</option>";
                                 }
                                 echo "</select><br>";
                                 echo "<button type='submit' class='btn btn-primary'>Delete Customer</button>";

@@ -21,13 +21,22 @@ $pdo = getDb($params->getUsername(), $params->getPassword(), $params->getDb(), $
             if(isset($_POST['username']) && isset($_POST['email'])) {
                 $_SESSION['username'] = $_POST['username'];
                 $_SESSION['email'] = $_POST['email'];
-                $customer = getUser($pdo, $_SESSION['username'], $_SESSION['email']);
+                $customer = getUserOverload($pdo, $_SESSION['username'], $_SESSION['email']);
                 if($customer) {
                     $_SESSION['id'] = $customer->getId();
                     $_SESSION['isAdmin'] = $customer->getisAdmin();
                 }
                 else {
-                    //TODO: implement creation of new user if they weren't found in the db. with no admin privilege
+                    $params = array(
+                        'username' => $_SESSION['username'],
+                        'email' => $_SESSION['email'],
+                        'address' => null,
+                        'accountType' => 0
+                    );
+                    $customerCreated = createUser($pdo, $params);
+                    echo "<p>Account created for new username " . $_SESSION['username'] . "</p>>";
+                    $_SESSION['id'] = $customerCreated->getId();
+                    $_SESSION['isAdmin'] = $customerCreated->getisAdmin();
                 }
             }
             ?>
