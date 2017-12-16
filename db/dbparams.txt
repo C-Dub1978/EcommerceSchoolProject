@@ -1,4 +1,4 @@
 username=sdev_owner
-password=sdev300
-host=localhost
-db=sdev
+password=14623361aZ!aZ@
+host=mysql.myubercode.com
+db=myubercode_sdev

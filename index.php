@@ -34,7 +34,7 @@ $pdo = getDb($params->getUsername(), $params->getPassword(), $params->getDb(), $
                         'accountType' => 0
                     );
                     $customerCreated = createUser($pdo, $params);
-                    echo "<p>Account created for new username " . $_SESSION['username'] . "</p>>";
+                    echo "<p>Account created for new username " . $_SESSION['username'] . "</p>";
                     $_SESSION['id'] = $customerCreated->getId();
                     $_SESSION['isAdmin'] = $customerCreated->getisAdmin();
                 }

@@ -451,7 +451,6 @@ function createUser($db, $userArray) {
         if($sql->rowCount() > 0) {
             $newCustomer = new Customer();
             $id = $db->lastInsertId();
-            echo "the last id is: " . $id;
             $newCustomer->setUsername($userArray['username']);
             $newCustomer->setEmail($userArray['email']);
             $newCustomer->setAddress($userArray['address']);
